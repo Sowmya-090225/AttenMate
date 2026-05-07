@@ -4,7 +4,8 @@ import {
   signOut, 
   onAuthStateChanged,
   GoogleAuthProvider,
-  updateProfile
+  updateProfile,
+  deleteUser
 } from 'firebase/auth';
 import { auth, googleProvider, storage } from '../firebase/config';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
@@ -80,12 +81,32 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  const deleteUserAccount = async () => {
+    if (!auth.currentUser) return;
+    setLoading(true);
+    try {
+      await deleteUser(auth.currentUser);
+      toast.success("Account deleted successfully");
+    } catch (error) {
+      console.error("Delete Account Error:", error);
+      if (error.code === 'auth/requires-recent-login') {
+        toast.error("Please re-login to delete your account");
+      } else {
+        toast.error("Failed to delete account");
+      }
+      throw error;
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const value = {
     user,
     loading,
     loginWithGoogle,
     logout,
-    updateUserInfo
+    updateUserInfo,
+    deleteUserAccount
   };
 
   return (

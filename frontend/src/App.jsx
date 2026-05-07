@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Routes, Route, Navigate } from 'react-router-dom';
+import { Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import Header from './components/Header';
 import Sidebar from './components/Sidebar';
 import SubjectCard from './components/SubjectCard';
@@ -14,10 +14,12 @@ import { calculateOverallAverage, getAttendanceSummaryByPeriod, getActiveAlerts 
 import { exportToPDF } from './utils/exportUtils';
 import { db } from './lib/supabaseClient';
 import { motion, AnimatePresence } from 'framer-motion';
+import SettingsDashboard from './components/SettingsDashboard';
 
 function App() {
   const [theme, setTheme] = useState(() => localStorage.getItem('attenmate_theme') || 'dark');
   const { user, loading: authLoading, logout } = useAuth();
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   
   const [subjects, setSubjects] = useState([]);
@@ -124,12 +126,15 @@ function App() {
                 toggleTheme={toggleTheme} 
                 user={user}
                 onLogout={logout}
-                settings={settings}
-                onUpdateSettings={handleUpdateSettings}
               />
               
               <div className="main-viewport">
-                <Header onExport={handleExport} user={user} onLogout={logout} />
+                <Header 
+                  onExport={handleExport} 
+                  user={user} 
+                  onLogout={logout} 
+                  onOpenSettings={() => navigate('/settings')}
+                />
                 
                 <main className="content-area">
                   <AlertBanner alerts={activeAlerts} />
@@ -194,6 +199,21 @@ function App() {
             </div>
           </ProtectedRoute>
         } 
+      />
+      <Route 
+        path="/settings" 
+        element={
+          <ProtectedRoute>
+            <SettingsDashboard 
+              isOpen={true} 
+              onClose={() => navigate('/')}
+              theme={theme}
+              toggleTheme={toggleTheme}
+              settings={settings}
+              onUpdateSettings={handleUpdateSettings}
+            />
+          </ProtectedRoute>
+        }
       />
       <Route path="*" element={<Navigate to="/" />} />
     </Routes>

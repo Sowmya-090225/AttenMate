@@ -1,7 +1,7 @@
 import React from 'react';
-import { Download } from 'lucide-react';
+import { Download, Settings } from 'lucide-react';
 
-const Header = ({ onExport, user, onLogout }) => {
+const Header = ({ onExport, user, onLogout, onOpenSettings }) => {
   return (
     <header className="action-bar glass">
       <div className="header-actions-left">
@@ -12,6 +12,10 @@ const Header = ({ onExport, user, onLogout }) => {
         <button className="btn-secondary export-btn" onClick={onExport} title="Export Report">
           <Download size={18} />
           <span>Export Report</span>
+        </button>
+
+        <button className="settings-btn glass" onClick={onOpenSettings} title="Settings">
+          <Settings size={20} />
         </button>
 
         <div className="user-profile">
@@ -54,6 +58,24 @@ const Header = ({ onExport, user, onLogout }) => {
           font-size: 0.85rem;
           font-weight: 700;
           border-radius: 0.75rem;
+        }
+
+        .settings-btn {
+          width: 44px;
+          height: 44px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          border-radius: 0.75rem;
+          color: var(--text-secondary);
+          transition: all 0.2s;
+          cursor: pointer;
+        }
+
+        .settings-btn:hover {
+          color: var(--accent-primary);
+          background: rgba(99, 102, 241, 0.1);
+          transform: rotate(45deg);
         }
 
         .user-profile {
